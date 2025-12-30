@@ -1,5 +1,13 @@
 import { Node, mergeAttributes } from '@tiptap/core';
-import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react';
+import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    alert: {
+      setAlert: (options: { type: string }) => ReturnType;
+    };
+  }
+}
 
 export const AlertExtension = Node.create({
   name: 'alert',
@@ -39,8 +47,8 @@ export const AlertExtension = Node.create({
       
       return (
         <NodeViewWrapper className={`p-4 my-4 border rounded-lg ${colors[type as keyof typeof colors]}`}>
-          <div className="font-bold mb-1 capitalize">{type}</div>
-          <div className="content" />
+          <div className="font-bold mb-1 capitalize" contentEditable={false}>{type}</div>
+          <NodeViewContent className="content" />
         </NodeViewWrapper>
       );
     });
