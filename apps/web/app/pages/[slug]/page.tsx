@@ -1,6 +1,6 @@
 import { getTenantDb, pages } from '@benotes/core';
 import { ChessPlugin } from '@benotes/plugin-chess';
-import { eq } from 'drizzle-orm';
+import { eq, and, notInArray } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import Editor from '../../../components/editor/Editor';
@@ -67,8 +67,25 @@ export default async function PageEditor({ params }: { params: Promise<{ slug: s
     // @ts-ignore
     const { chess_positions } = ChessPlugin.schema;
     
-    // Simple sync: Upsert found positions
-    // In a real app, we might want to delete positions that were removed (diffing)
+    // Cleanup: Delete positions that are no longer in the document for this page
+    const currentIds = chessPositions.map(p => p.id);
+    
+    // If we found positions, delete any FOR THIS PAGE that are NOT in the list
+    if (currentIds.length > 0) {
+        db.delete(chess_positions)
+          .where(and(
+              eq(chess_positions.pageId, page!.id),
+              notInArray(chess_positions.id, currentIds)
+          ))
+          .run();
+    } else {
+        // If NO positions found, delete ALL for this page
+        db.delete(chess_positions)
+          .where(eq(chess_positions.pageId, page!.id))
+          .run();
+    }
+    
+    // Sync: Upsert found positions
     for (const pos of chessPositions) {
         db.insert(chess_positions).values({
             id: pos.id,

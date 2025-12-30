@@ -56,7 +56,7 @@ export default async function DashboardPage() {
                     or just display the FEN text for this MVP.
                  */}
                  <img 
-                   src={`https://fen-image.chesscom-api.com/?fen=${pos.fen}&board=green&piece=neo&size=400`} 
+                   src={`https://lichess1.org/export/fen.gif?fen=${encodeURIComponent(pos.fen)}&color=white`} 
                    alt="Chess Position"
                    className="w-full h-full object-contain"
                  />
