@@ -66,8 +66,10 @@ export const getTenantDb = (tenantId: string) => {
 
   const sqlite = new Database(path.join(tenantDir, 'db.sqlite'));
 
-  // Bootstrap Tenant Schema (Temporary for Walking Skeleton)
-  sqlite.exec(`
+    // Bootstrap Tenant Schema (Temporary for Walking Skeleton)
+    // NOTE: We dropped NOT NULL on 'slug' temporarily or it might be the issue? 
+    // Actually, slug is NOT NULL in schema.
+    sqlite.exec(`
     CREATE TABLE IF NOT EXISTS pages (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -122,3 +124,17 @@ export const initTenant = (tenantId: string, name: string) => {
     const db = getTenantDb(tenantId);
     return db;
 };
+
+/**
+ * Reset and re-initialize a tenant DB (useful for debugging schema issues)
+ */
+export const resetTenantDb = (tenantId: string) => {
+    const tenantDir = path.join(DATA_DIR, 'tenants', tenantId);
+    const dbPath = path.join(tenantDir, 'db.sqlite');
+    if (fs.existsSync(dbPath)) {
+        fs.unlinkSync(dbPath);
+    }
+    // Remove from cache to force reconnection
+    delete dbCache[tenantId];
+    return getTenantDb(tenantId);
+}

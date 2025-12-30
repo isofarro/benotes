@@ -1,10 +1,17 @@
-import { getSystemDb, initTenant, getTenantDb, pages } from '@benotes/core';
+import { getSystemDb, initTenant, getTenantDb, pages, resetTenantDb } from '@benotes/core';
 import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
+import Link from 'next/link';
 
 export default async function Home() {
   // Ensure tenant exists
+  // initTenant('demo', 'Demo Tenant');
+  
+  // DEBUG: Reset DB to ensure schema is correct (Remove this in prod)
+  // This line is commented out by default, uncomment if schema is broken
+  // resetTenantDb('demo');
   initTenant('demo', 'Demo Tenant');
+
   const db = getTenantDb('demo');
   
   // Fetch pages
@@ -58,13 +65,13 @@ export default async function Home() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {allPages.map(page => (
-              <div key={page.id} className="p-4 border border-gray-200 rounded hover:shadow-md transition-shadow">
+              <Link href={`/pages/${page.slug}`} key={page.id} className="block p-4 border border-gray-200 rounded hover:shadow-md transition-shadow">
                 <h3 className="font-bold text-lg">{page.title}</h3>
                 <p className="text-sm text-gray-500 font-mono mt-1">/{page.slug}</p>
                 <div className="text-xs text-gray-400 mt-2">
                   Created: {new Date(page.createdAt!).toLocaleDateString()}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
