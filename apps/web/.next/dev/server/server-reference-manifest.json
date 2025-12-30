@@ -1,0 +1,21 @@
+{
+  "node": {
+    "405677897d0a9b9d075f8a55ff3df3fc648e99f06f": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/apps/web/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/apps/web/app/page.tsx [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "apps/web/app/page.tsx"
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      },
+      "filename": "apps/web/app/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "vitYNp3OyInA6VEqC9JBJmnOYTvPj8JaUl5idhHXpfQ="
+}

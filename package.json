@@ -1,0 +1,22 @@
+{
+  "name": "benotes-app",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "@biomejs/biome": "latest",
+    "typescript": "latest",
+    "@types/node": "latest"
+  },
+  "packageManager": "yarn@1.22.19"
+}
