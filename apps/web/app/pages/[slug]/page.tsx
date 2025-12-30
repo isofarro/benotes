@@ -1,12 +1,18 @@
 import { getTenantDb, pages } from '@benotes/core';
 import { eq } from 'drizzle-orm';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import Editor from '../../../components/editor/Editor';
 import Link from 'next/link';
+import { auth } from '@/auth';
 
 export default async function PageEditor({ params }: { params: Promise<{ slug: string }> }) {
-  const db = getTenantDb('demo');
+  const session = await auth();
+  if (!session?.user?.name) {
+    redirect('/login');
+  }
+
+  const db = getTenantDb(session.user.name);
   const { slug } = await params;
 
   // Fetch Page
@@ -19,7 +25,11 @@ export default async function PageEditor({ params }: { params: Promise<{ slug: s
   // Server Action to Save
   async function savePage(content: object) {
     'use server';
-    const db = getTenantDb('demo');
+    const session = await auth();
+    if (!session?.user?.name) {
+       return;
+    }
+    const db = getTenantDb(session.user.name);
     db.update(pages)
       .set({ 
         content: JSON.stringify(content),

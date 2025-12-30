@@ -2,17 +2,26 @@ import { getSystemDb, initTenant, getTenantDb, pages, resetTenantDb } from '@ben
 import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
 import Link from 'next/link';
+import { auth, signOut } from '@/auth';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
+  const session = await auth();
+  if (!session?.user?.name) {
+    redirect('/login');
+  }
+
+  const username = session.user.name;
+
   // Ensure tenant exists
   // initTenant('demo', 'Demo Tenant');
   
   // DEBUG: Reset DB to ensure schema is correct (Remove this in prod)
   // This line is commented out by default, uncomment if schema is broken
   // resetTenantDb('demo');
-  initTenant('demo', 'Demo Tenant');
+  initTenant(username, username);
 
-  const db = getTenantDb('demo');
+  const db = getTenantDb(username);
   
   // Fetch pages
   const allPages = db.select().from(pages).all();
@@ -20,10 +29,13 @@ export default async function Home() {
   // Server Action
   async function createPage(formData: FormData) {
     'use server';
+    const session = await auth();
+    if (!session?.user?.name) return;
+
     const title = formData.get('title') as string;
     if (!title) return;
     
-    const db = getTenantDb('demo');
+    const db = getTenantDb(session.user.name);
     db.insert(pages).values({
       id: randomUUID(),
       title,
@@ -38,7 +50,18 @@ export default async function Home() {
 
   return (
     <main className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Benotes</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Benotes</h1>
+        <div className="flex items-center gap-4">
+           <span className="text-sm text-gray-600">User: {username}</span>
+           <form action={async () => {
+             'use server';
+             await signOut();
+           }}>
+             <button type="submit" className="text-sm text-red-600 hover:underline">Logout</button>
+           </form>
+        </div>
+      </div>
       
       <div className="bg-white p-6 rounded-lg shadow mb-8">
         <h2 className="text-xl font-semibold mb-4">Create New Page</h2>
