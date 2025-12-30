@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { ChessExtension } from './extensions/chess';
+import { clientPlugins } from '../../lib/plugin-registry';
 import { useEffect } from 'react';
 
 interface EditorProps {
@@ -19,7 +19,10 @@ export default function Editor({ initialContent, onChange, editable = true }: Ed
       Placeholder.configure({
         placeholder: 'Type something... or "/" for commands',
       }),
-      ChessExtension,
+      // Dynamically load extensions
+      ...clientPlugins
+        .map(p => p.editorExtension)
+        .filter(ext => ext !== undefined),
     ],
     content: initialContent,
     editable,
@@ -85,13 +88,21 @@ export default function Editor({ initialContent, onChange, editable = true }: Ed
           >
             List
           </button>
-          <button
-            onClick={() => editor.chain().focus().setChess().run()}
-            className={`px-2 py-1 rounded hover:bg-gray-100`}
-            title="Insert Chess Board"
-          >
-            ♟️
-          </button>
+          
+          {/* Plugin Buttons */}
+          {clientPlugins.map((plugin) => {
+            if (!plugin.toolbarButton) return null;
+            return (
+              <button
+                key={plugin.id}
+                onClick={() => plugin.toolbarButton?.action(editor)}
+                className={`px-2 py-1 rounded ${plugin.toolbarButton.isActive && plugin.toolbarButton.isActive(editor) ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                title={plugin.toolbarButton.label}
+              >
+                {plugin.toolbarButton.icon}
+              </button>
+            );
+          })}
         </div>
       )}
       
