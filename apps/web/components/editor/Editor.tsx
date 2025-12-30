@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import UniqueID from '@tiptap/extension-unique-id';
 import { clientPlugins } from '../../lib/plugin-registry';
 import { useEffect } from 'react';
 
@@ -18,6 +19,9 @@ export default function Editor({ initialContent, onChange, editable = true }: Ed
       StarterKit,
       Placeholder.configure({
         placeholder: 'Type something... or "/" for commands',
+      }),
+      UniqueID.configure({
+        types: ['heading', 'paragraph', 'chess', 'alert'],
       }),
       // Dynamically load extensions
       ...clientPlugins

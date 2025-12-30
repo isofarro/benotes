@@ -53,6 +53,9 @@ export default async function Home() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Benotes</h1>
         <div className="flex items-center gap-4">
+           <Link href="/dashboard" className="text-sm font-medium text-blue-600 hover:underline">
+             ♟️ Chess Dashboard
+           </Link>
            <span className="text-sm text-gray-600">User: {username}</span>
            <form action={async () => {
              'use server';

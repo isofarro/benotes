@@ -107,12 +107,13 @@ export const getTenantDb = (tenantId: string) => {
       result TEXT,
       created_at INTEGER
     );
-    CREATE TABLE IF NOT EXISTS chess_annotations (
+    CREATE TABLE IF NOT EXISTS chess_positions (
       id TEXT PRIMARY KEY,
-      game_id TEXT REFERENCES chess_games(id) ON DELETE CASCADE,
+      page_id TEXT NOT NULL,
       fen TEXT NOT NULL,
-      comment TEXT,
-      created_at INTEGER
+      description TEXT,
+      created_at INTEGER,
+      updated_at INTEGER
     );
   `);
 

@@ -13,10 +13,11 @@ export const chessGames = sqliteTable('chess_games', {
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
 });
 
-export const chessAnnotations = sqliteTable('chess_annotations', {
-  id: text('id').primaryKey(),
-  gameId: text('game_id').references(() => chessGames.id, { onDelete: 'cascade' }),
+export const chessPositions = sqliteTable('chess_positions', {
+  id: text('id').primaryKey(), // The block ID from Tiptap
+  pageId: text('page_id').notNull(), // Foreign key to pages table (manual link)
   fen: text('fen').notNull(),
-  comment: text('comment'),
+  description: text('description'), // Optional context from surrounding text?
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
 });

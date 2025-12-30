@@ -44,7 +44,9 @@ export default function ClientEditorWrapper({
           if (timer) clearTimeout(timer);
           setStatus('saving');
           const newTimer = setTimeout(async () => {
-              await callback(content);
+              // Ensure content is a plain object to avoid "Client Reference" issues
+              const cleanContent = JSON.parse(JSON.stringify(content));
+              await callback(cleanContent);
               setStatus('saved');
               setTimeout(() => setStatus('idle'), 2000);
           }, delay);

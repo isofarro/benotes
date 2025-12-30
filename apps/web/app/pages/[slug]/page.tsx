@@ -1,10 +1,32 @@
 import { getTenantDb, pages } from '@benotes/core';
+import { ChessPlugin } from '@benotes/plugin-chess';
 import { eq } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import Editor from '../../../components/editor/Editor';
 import Link from 'next/link';
 import { auth } from '@/auth';
+
+// Helper to extract chess positions from Tiptap JSON
+function extractChessPositions(doc: any) {
+  const positions: any[] = [];
+  
+  function traverse(node: any) {
+    if (node.type === 'chess' && node.attrs && node.attrs.fen && node.attrs.id) {
+      positions.push({
+        id: node.attrs.id,
+        fen: node.attrs.fen,
+      });
+    }
+    
+    if (node.content) {
+      node.content.forEach(traverse);
+    }
+  }
+  
+  traverse(doc);
+  return positions;
+}
 
 export default async function PageEditor({ params }: { params: Promise<{ slug: string }> }) {
   const session = await auth();
@@ -23,13 +45,15 @@ export default async function PageEditor({ params }: { params: Promise<{ slug: s
   }
 
   // Server Action to Save
-  async function savePage(content: object) {
+  async function savePage(content: any) {
     'use server';
     const session = await auth();
     if (!session?.user?.name) {
        return;
     }
     const db = getTenantDb(session.user.name);
+    
+    // 1. Save the Document
     db.update(pages)
       .set({ 
         content: JSON.stringify(content),
@@ -37,6 +61,26 @@ export default async function PageEditor({ params }: { params: Promise<{ slug: s
       })
       .where(eq(pages.slug, slug))
       .run();
+    
+    // 2. Indexing: Extract and Save Chess Positions
+    const chessPositions = extractChessPositions(content);
+    // @ts-ignore
+    const { chess_positions } = ChessPlugin.schema;
+    
+    // Simple sync: Upsert found positions
+    // In a real app, we might want to delete positions that were removed (diffing)
+    for (const pos of chessPositions) {
+        db.insert(chess_positions).values({
+            id: pos.id,
+            pageId: page!.id,
+            fen: pos.fen,
+            updatedAt: new Date()
+        }).onConflictDoUpdate({
+            // @ts-ignore
+            target: chess_positions.id,
+            set: { fen: pos.fen, updatedAt: new Date() }
+        }).run();
+    }
     
     revalidatePath(`/pages/${slug}`);
   }

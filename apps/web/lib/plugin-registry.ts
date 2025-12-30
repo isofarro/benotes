@@ -1,4 +1,4 @@
-import { ChessExtension } from '@benotes/plugin-chess';
+import { ChessExtension } from '@benotes/plugin-chess/client';
 import { AlertExtension } from '@benotes/plugin-alert';
 import { ClientPlugin } from './plugins';
 

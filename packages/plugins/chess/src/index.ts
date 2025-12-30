@@ -1,6 +1,5 @@
 import { PluginDefinition } from '@benotes/core';
 import * as schema from './schema';
-export { ChessExtension } from './ui/extension';
 
 export const ChessPlugin: PluginDefinition = {
   id: 'chess',
@@ -8,6 +7,6 @@ export const ChessPlugin: PluginDefinition = {
   description: 'Manage chess games, positions, and annotations.',
   schema: {
     chess_games: schema.chessGames,
-    chess_annotations: schema.chessAnnotations,
+    chess_positions: schema.chessPositions,
   },
 };
