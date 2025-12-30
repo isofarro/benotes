@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { ChessExtension } from './extensions/chess';
 import { useEffect } from 'react';
 
 interface EditorProps {
@@ -18,6 +19,7 @@ export default function Editor({ initialContent, onChange, editable = true }: Ed
       Placeholder.configure({
         placeholder: 'Type something... or "/" for commands',
       }),
+      ChessExtension,
     ],
     content: initialContent,
     editable,
@@ -82,6 +84,13 @@ export default function Editor({ initialContent, onChange, editable = true }: Ed
             className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
           >
             List
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setChess().run()}
+            className={`px-2 py-1 rounded hover:bg-gray-100`}
+            title="Insert Chess Board"
+          >
+            ♟️
           </button>
         </div>
       )}

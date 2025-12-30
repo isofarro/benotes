@@ -66,10 +66,8 @@ export const getTenantDb = (tenantId: string) => {
 
   const sqlite = new Database(path.join(tenantDir, 'db.sqlite'));
 
-    // Bootstrap Tenant Schema (Temporary for Walking Skeleton)
-    // NOTE: We dropped NOT NULL on 'slug' temporarily or it might be the issue? 
-    // Actually, slug is NOT NULL in schema.
-    sqlite.exec(`
+  // Bootstrap Core Tenant Schema
+  sqlite.exec(`
     CREATE TABLE IF NOT EXISTS pages (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -93,6 +91,28 @@ export const getTenantDb = (tenantId: string) => {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
       color TEXT
+    );
+  `);
+
+  // Bootstrap Plugin Schemas (Hardcoded for Chess Plugin for now)
+  // In a real system, we would iterate over registered plugins
+  sqlite.exec(`
+    CREATE TABLE IF NOT EXISTS chess_games (
+      id TEXT PRIMARY KEY,
+      tenant_id TEXT NOT NULL,
+      pgn TEXT,
+      white TEXT,
+      black TEXT,
+      date INTEGER,
+      result TEXT,
+      created_at INTEGER
+    );
+    CREATE TABLE IF NOT EXISTS chess_annotations (
+      id TEXT PRIMARY KEY,
+      game_id TEXT REFERENCES chess_games(id) ON DELETE CASCADE,
+      fen TEXT NOT NULL,
+      comment TEXT,
+      created_at INTEGER
     );
   `);
 

@@ -1,11 +1,10 @@
-import { PluginDefinition } from '@benotes/core';
-import { ChessPlugin } from '@benotes/plugin-chess';
+import { PluginDefinition } from './plugin';
 
-// Hardcoded registry for now (Walking Skeleton)
-// In future, this could scan directories or use a dynamic import map
-export const plugins: Record<string, PluginDefinition> = {
-  [ChessPlugin.id]: ChessPlugin,
-};
+export const plugins: Record<string, PluginDefinition> = {};
+
+export function registerPlugin(plugin: PluginDefinition) {
+  plugins[plugin.id] = plugin;
+}
 
 export const getPlugin = (id: string) => plugins[id];
 export const getAllPlugins = () => Object.values(plugins);
