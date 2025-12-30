@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@benotes/core": "*",
+    "@benotes/plugin-chess": "*",
     "@tanstack/react-query": "latest",
     "@tiptap/extension-placeholder": "^3.14.0",
     "@tiptap/pm": "^3.14.0",

@@ -1,0 +1,17 @@
+{
+  "name": "@benotes/plugin-chess",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "biome lint ."
+  },
+  "dependencies": {
+    "@benotes/core": "*",
+    "drizzle-orm": "^0.30.0",
+    "chess.ts": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest"
+  }
+}

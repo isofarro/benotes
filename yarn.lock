@@ -1409,6 +1409,11 @@ check-error@^1.0.3:
   dependencies:
     get-func-name "^2.0.2"
 
+chess.ts@latest:
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/chess.ts/-/chess.ts-0.16.2.tgz#d84b422d8178644eba92720861356a9e79493fb0"
+  integrity sha512-eqTrUGxN7xLr/SHQcc7AT+Kp1aRQb1iCMn1pBXsmpU06soRH0u+HJmM/vcxKadqqvoDEazu9uFvVoZSKP2pDSg==
+
 chownr@^1.1.1:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.4.tgz#6fc9d7b42d32a583596337666e7d08084da2cc6b"
